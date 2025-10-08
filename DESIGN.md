@@ -89,7 +89,7 @@ Flow Dynamics Explorer takes a different approach:
 **Why**: Respiratory arousals are the missing piece for UARS patients - they don't show up in AHI but wreck sleep quality. This metric is more sensitive than clinical RERA scoring and provides a broader view of arousal burden.
 
 **How**:
-- Calculate breath-by-breath respiratory rate and tidal volume
+- Read respiratory rate (RR) and tidal volume (Vt) signals directly from BRP file
 - Establish rolling baseline (120-second window)
 - Flag breaths with significant increases vs baseline:
   - Respiratory rate increase >20%
@@ -111,8 +111,8 @@ Flow Dynamics Explorer takes a different approach:
 **Why**: MV patterns reveal loop gain behavior, treatment effectiveness, and overall ventilatory stability
 
 **How**:
-- Calculate rolling minute ventilation from flow data (25 Hz)
-- Smooth with appropriate window (default 60 seconds)
+- Read MV signal directly from ResMed BRP.edf file (no calculation needed)
+- Apply optional smoothing if needed
 - Identify baseline, variability, and excursions
 - Correlate with other metrics
 
@@ -120,6 +120,8 @@ Flow Dynamics Explorer takes a different approach:
 - MV time series plot
 - Statistical summary (mean, SD, CV)
 - Stability score
+
+**Note**: ResMed devices record MV, tidal volume (Vt), and respiratory rate (RR) directly in BRP files.
 
 ## Architecture
 
@@ -150,8 +152,8 @@ Flow Dynamics Explorer takes a different approach:
 
 ### Core Components
 
-1. **EDF Parser**: Read OSCAR BRP and other EDF files
-2. **Signal Processor**: Calculate derived signals (MV, etc.)
+1. **EDF Parser**: Read OSCAR BRP files and extract signals (Flow, Pressure, MV, Vt, RR, Leak, etc.)
+2. **Signal Processor**: Preprocess and filter signals as needed
 3. **Metric Calculators**: Modular analysis modules for each metric
 4. **Visualization Engine**: Generate plots and interactive views
 5. **Report Generator**: Produce human-readable summaries
@@ -160,13 +162,13 @@ Flow Dynamics Explorer takes a different approach:
 ### Data Flow
 
 ```
-EDF Files → Parser → Raw Signals (flow, pressure, etc.)
-                ↓
-          Signal Processor → Derived Signals (MV, tidal volume, etc.)
-                ↓
-          Metric Calculators → Analysis Results
-                ↓
-          Visualization + Report Generator → User Interface
+BRP.edf Files → Parser → Signals (Flow, Pressure, MV, Vt, RR, Leak)
+                    ↓
+              Signal Processor → Filtered/Preprocessed Signals
+                    ↓
+              Metric Calculators → Analysis Results (Periodicity, Regularity, FL, Arousal Index)
+                    ↓
+              Visualization + Report Generator → User Interface
 ```
 
 ## UI/UX Approach
