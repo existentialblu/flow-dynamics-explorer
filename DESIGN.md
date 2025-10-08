@@ -56,10 +56,11 @@ Flow Dynamics Explorer takes a different approach:
 **How**:
 - Sample entropy calculation on minute ventilation
 - ApEn (Approximate Entropy) or SampEn (Sample Entropy)
-- Higher values = more chaotic = generally better
-- Lower values = more regular = often problematic
+- Invert the entropy value to create regularity score
+- Higher score = more regular = worse (rigid ventilatory control)
+- Lower score = more chaotic = better (healthy variability)
 
-**Output**: Regularity score, interpretation guidance
+**Output**: Regularity score (0-100, higher is worse), interpretation guidance
 
 ### 3. Enhanced Flow Limitation Detection
 
